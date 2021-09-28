@@ -84,7 +84,19 @@ class UI {
         });
     }
     actualizarRestante(restante) {
-        document.querySelector('#restante').textContent = restante;
+        const elemRestante = document.querySelector('#restante');
+        elemRestante.textContent = restante;
+
+        const divRestante = document.querySelector('div .restante');
+        let porcentaje = (restante / presupuesto.presupuesto) * 100;
+
+        if (porcentaje <= 25) {
+            divRestante.classList.remove('alert-success');
+            divRestante.classList.add('alert-danger');
+        } else if (porcentaje <= 50) {
+            divRestante.classList.remove('alert-success');
+            divRestante.classList.add('alert-warning');
+        }
     }
     limpiarGastos() {
         while (listaGastos.hasChildNodes()) {
