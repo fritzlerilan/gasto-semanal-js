@@ -2,8 +2,6 @@
 const formulario = document.querySelector('#agregar-gasto');
 const listaGastos = document.querySelector('#gastos ul');
 
-console.log('formulario:', formulario)
-console.log('listaGastos:', listaGastos)
 
 // Eventos
 eventListeners();
@@ -12,7 +10,21 @@ function eventListeners() {
 }
 
 // Clases
+class Presupuesto {
+    constructor(presupuesto) {
+        this.presupuesto = presupuesto;
+        this.restante = presupuesto;
+        this.gastos = [];
+    }
+}
 
+class UI {
+
+}
+
+// Instanciar
+const ui = new UI();
+let presupuesto; //Instanciado al momento de cargar el DOM y ser un valor valido.
 
 // Funciones
 
@@ -20,8 +32,10 @@ function preguntarPresupuesto(){
     let presupuestoUsuario;
     do {
         presupuestoUsuario = prompt('Cual es tu presupuesto');
-        console.log('Presupuesto Usuario:', presupuestoUsuario);
     } while(isNaN(presupuestoUsuario) || presupuestoUsuario <= 0);
 
+    const valor = Number(presupuestoUsuario);
+    presupuesto = new Presupuesto(valor);
+    console.log(presupuesto);
 }
 
