@@ -24,14 +24,14 @@ class Presupuesto {
 
     nuevoGasto(gasto) {
         this.gastos = [...this.gastos, gasto];
-        console.log(this.gastos);
+
     }
 }
 
 class UI {
-    insertarPresupuesto( cantidad ) {
+    insertarPresupuesto(cantidad) {
         // Extrayendo valores
-        const {presupuesto, restante} = cantidad;
+        const { presupuesto, restante } = cantidad;
         // Agregando al HTML
         document.querySelector('#total').textContent = presupuesto;
         document.querySelector('#restante').textContent = restante;
@@ -43,7 +43,7 @@ class UI {
         const divMensaje = document.createElement('div');
         divMensaje.classList.add('text-center', 'alert');
         divMensaje.classList.add((tipo === ERROR ? 'alert-danger' : 'alert-success'));
-        
+
         // Mensaje
         divMensaje.textContent = mensaje;
         // Limpiar mensajes e insertar en HTML
@@ -51,11 +51,40 @@ class UI {
         mensajes.appendChild(divMensaje);
         setTimeout(() => {
             divMensaje.remove();
-        },3000)
+        }, 3000)
     }
 
+    agregarGastoListado(gastos) {
+        ui.limpiarGastos();
+        gastos.forEach(gasto => {
+            const { cantidad, descripcionGasto, id } = gasto;
+
+            // Crear un LI
+            const nuevoGasto = document.createElement('li');
+            nuevoGasto.className = 'list-group-item d-flex justify-content-between align-items-center';
+            nuevoGasto.dataset.id = id;
+            
+            // Agregar el HTML del gasto
+            nuevoGasto.innerHTML = `${descripcionGasto} <span class="badge badge-primary badge-pill"> $${cantidad} </span>`;
+            
+            // Boton para borrar el gasto
+            const btnBorrar = document.createElement('button');
+            btnBorrar.classList.add('btn', 'btn-danger', 'borrar-gasto');
+            btnBorrar.innerHTML = 'Borrar &times'
+            nuevoGasto.appendChild(btnBorrar);
+
+            // Agregar al HTML
+            listaGastos.appendChild(nuevoGasto);
+
+        });
+    }
+    limpiarGastos(){
+        while(listaGastos.hasChildNodes()){
+            listaGastos.firstChild.remove()
+        }
+    }
     limpiarMensajes() {
-        while(mensajes.hasChildNodes()) {
+        while (mensajes.hasChildNodes()) {
             mensajes.firstChild.remove();
         }
     }
@@ -67,11 +96,11 @@ let presupuesto; //Instanciado al momento de cargar el DOM y ser un valor valido
 
 // Funciones
 
-function preguntarPresupuesto(){
+function preguntarPresupuesto() {
     let presupuestoUsuario;
     do {
         presupuestoUsuario = prompt('Cual es tu presupuesto');
-    } while(isNaN(presupuestoUsuario) || presupuestoUsuario <= 0);
+    } while (isNaN(presupuestoUsuario) || presupuestoUsuario <= 0);
 
     const valor = Number(presupuestoUsuario);
     presupuesto = new Presupuesto(valor);
@@ -87,7 +116,7 @@ function agregarGasto(e) {
     const cantidad = Number(document.querySelector('#cantidad').value);
 
     // Validar
-    if(descripcionGasto === '' || cantidad === '') {
+    if (descripcionGasto === '' || cantidad === '') {
         ui.imprimirAlerta('Ambios campos son obligatorios', ERROR);
         return;
     } else if (isNaN(cantidad) || cantidad <= 0) {
@@ -96,8 +125,13 @@ function agregarGasto(e) {
     }
 
     // Agregar Gasto   
-    const gasto = {descripcionGasto, cantidad, id: Date.now() };
+    const gasto = { descripcionGasto, cantidad, id: Date.now() };
     presupuesto.nuevoGasto(gasto);
     ui.imprimirAlerta('Gasto agregado correctamente', SUCCESS);
+
+    // Imprimir los gastos
+    const { gastos } = presupuesto;
+    ui.agregarGastoListado(gastos);
+
     formulario.reset();
 }
