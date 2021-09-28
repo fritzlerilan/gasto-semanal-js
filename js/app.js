@@ -98,6 +98,7 @@ class UI {
             divRestante.classList.add('alert-warning');
         }
     }
+
     limpiarGastos() {
         while (listaGastos.hasChildNodes()) {
             listaGastos.firstChild.remove()
@@ -143,6 +144,10 @@ function agregarGasto(e) {
         return;
     } else if (isNaN(cantidad) || cantidad <= 0) {
         ui.imprimirAlerta('Cantidad no válida', ERROR);
+        return;
+    } else if (cantidad > presupuesto.restante){
+        ui.imprimirAlerta('No posees fondos suficientes', ERROR);
+        console.log(presupuesto.gastos)
         return;
     }
 
