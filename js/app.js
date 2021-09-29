@@ -32,6 +32,11 @@ class Presupuesto {
         this.restante = this.presupuesto - gastado;
         console.log(this.restante);
     }
+    borrarGasto(id) {
+        console.log(this.gastos);
+        this.gastos = this.gastos.filter(gasto => gasto.id !== Number(id));
+        this.calcularRestante();
+    }
 }
 
 class UI {
@@ -77,6 +82,17 @@ class UI {
             const btnBorrar = document.createElement('button');
             btnBorrar.classList.add('btn', 'btn-danger', 'borrar-gasto');
             btnBorrar.innerHTML = 'Borrar &times'
+
+            btnBorrar.onclick = () => {
+                if(confirm('Esta seguro que desea borrar el registro?')){
+                    const id = btnBorrar.parentElement.dataset.id;
+                    btnBorrar.parentElement.remove();
+                    eliminarGasto(id);
+                }else {
+                    return;
+                }
+            }
+
             nuevoGasto.appendChild(btnBorrar);
 
             // Agregar al HTML
@@ -91,11 +107,14 @@ class UI {
         let porcentaje = (restante / presupuesto.presupuesto) * 100;
 
         if (porcentaje <= 25) {
-            divRestante.classList.remove('alert-success');
+            divRestante.classList.remove('alert-success', 'alert-warning', 'alert-danger');
             divRestante.classList.add('alert-danger');
         } else if (porcentaje <= 50) {
-            divRestante.classList.remove('alert-success');
+            divRestante.classList.remove('alert-success', 'alert-warning', 'alert-danger');
             divRestante.classList.add('alert-warning');
+        } else {
+            divRestante.classList.remove('alert-success', 'alert-warning', 'alert-danger');
+            divRestante.classList.add('alert-success');
         }
     }
 
@@ -145,7 +164,7 @@ function agregarGasto(e) {
     } else if (isNaN(cantidad) || cantidad <= 0) {
         ui.imprimirAlerta('Cantidad no válida', ERROR);
         return;
-    } else if (cantidad > presupuesto.restante){
+    } else if (cantidad > presupuesto.restante) {
         ui.imprimirAlerta('No posees fondos suficientes', ERROR);
         console.log(presupuesto.gastos)
         return;
@@ -161,4 +180,8 @@ function agregarGasto(e) {
     ui.agregarGastoListado(gastos);
     ui.actualizarRestante(restante);
     formulario.reset();
+}
+function eliminarGasto(id) {
+    presupuesto.borrarGasto(id);
+    ui.actualizarRestante(presupuesto.restante);
 }
